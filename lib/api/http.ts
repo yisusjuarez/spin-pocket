@@ -1,6 +1,6 @@
 import type { ApiResponse } from "@/types/auth";
 
-export async function postJson<T>(
+export async function post<T>(
   url: string,
   body: unknown
 ): Promise<ApiResponse<T>> {

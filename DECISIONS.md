@@ -36,6 +36,14 @@ All data fetching is done through Next.js API Routes, which act as a proxy layer
 In this project, responses are mocked, but the structure mirrors a real integration so that replacing mocks with a real backend requires no changes on the client side.
 This approach keeps sensitive data such as API keys and credentials on the server, preventing exposure in the browser. The client only communicates with internal API Routes, which act as a security boundary.
 
+Server Components read data by calling the database layer directly, without going through an API route. This avoids an unnecessary internal HTTP round trip while still keeping all data access server side. API routes handle operations triggered from the client (mutations and client side fetches).
+
+### Mock Database
+
+Data is stored in JSON files under `mock-db/` and accessed through a dedicated layer in `lib/db/`. Each file corresponds to a domain entity (`users.json`, `transactions.json`). The DB layer functions (`getUserById`, `getTransactionsByUserId`, `addTransaction`, etc.) handle all reads and writes, so no other part of the code touches the files directly.
+
+This mirrors the separation that would exist with a real database: the rest of the application only knows about the functions, not the storage details. Swapping the JSON files for a real database only requires updating `lib/db/`.
+
 ---
 
 ### Styling

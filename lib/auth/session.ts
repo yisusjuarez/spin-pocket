@@ -1,17 +1,20 @@
 import { cookies } from "next/headers";
-import { findUserById } from "@/lib/api/mockUsers";
+import { getUserById } from "@/lib/db/users";
 import type { Session } from "@/types/auth";
 
-export const SESSION_COOKIE = "spin-pocket-session";
+const SESSION_COOKIE = "spin-pocket-session";
 
-export function cookieOptions() {
-  return {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax" as const,
-    path: "/",
-    maxAge: 60 * 60 * 24, // 24 hours
-  };
+const SESSION_COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  path: "/",
+  maxAge: 60 * 60 * 24,
+};
+
+export async function createSession(userId: string): Promise<void> {
+  const cookieStore = await cookies();
+  cookieStore.set(SESSION_COOKIE, userId, SESSION_COOKIE_OPTIONS);
 }
 
 export async function getSession(): Promise<Session | null> {
@@ -20,7 +23,7 @@ export async function getSession(): Promise<Session | null> {
 
   if (!userId) return null;
 
-  const user = findUserById(userId);
+  const user = await getUserById(userId);
   if (!user) return null;
 
   return { user, issuedAt: Date.now() };
@@ -28,5 +31,5 @@ export async function getSession(): Promise<Session | null> {
 
 export async function clearSession(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, "", { ...cookieOptions(), maxAge: 0 });
+  cookieStore.set(SESSION_COOKIE, "", { ...SESSION_COOKIE_OPTIONS, maxAge: 0 });
 }

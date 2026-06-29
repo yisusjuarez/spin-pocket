@@ -10,7 +10,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/hooks/useLogin", () => ({
-  useLogin: () => ({ login: mockLogin, isPending: false, error: null }),
+  useLogin: () => ({ handleLogin: mockLogin, isPending: false, error: null }),
 }));
 
 beforeEach(() => {

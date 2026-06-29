@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tx-1",
+    "fromUserId": "user-2",
+    "fromName": "Carlos Méndez",
+    "toUserId": "user-1",
+    "toName": "Ana García",
+    "amount": 500.00,
+    "description": "Dinner split",
+    "createdAt": 1750000000000
+  },
+  {
+    "id": "tx-2",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": "user-2",
+    "toName": "Carlos Méndez",
+    "amount": 1200.00,
+    "description": "Rent",
+    "createdAt": 1749900000000
+  },
+  {
+    "id": "tx-3",
+    "fromUserId": "user-2",
+    "fromName": "Carlos Méndez",
+    "toUserId": "user-1",
+    "toName": "Ana García",
+    "amount": 250.00,
+    "description": "Concert tickets",
+    "createdAt": 1749800000000
+  }
+]

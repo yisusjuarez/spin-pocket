@@ -1,7 +1,6 @@
-import { cookies } from "next/headers";
 import { validateIdentifier, validatePassword } from "@/lib/validation/login";
-import { findUserByIdentifier, checkPassword } from "@/lib/api/mockUsers";
-import { SESSION_COOKIE, cookieOptions } from "@/lib/auth/session";
+import { getUserByIdentifier, checkPassword } from "@/lib/db/users";
+import { createSession } from "@/lib/auth/session";
 import type { LoginResult, ApiResponse } from "@/types/auth";
 
 function sleep(ms: number): Promise<void> {
@@ -33,8 +32,8 @@ export async function POST(request: Request): Promise<Response> {
 
   await sleep(800);
 
-  const user = findUserByIdentifier(identifier);
-  if (!user || !checkPassword(user.id, password)) {
+  const user = await getUserByIdentifier(identifier);
+  if (!user || !(await checkPassword(user.id, password))) {
     const response: ApiResponse<never> = {
       ok: false,
       error: {
@@ -45,8 +44,7 @@ export async function POST(request: Request): Promise<Response> {
     return Response.json(response, { status: 401 });
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, user.id, cookieOptions());
+  await createSession(user.id);
 
   const response: ApiResponse<LoginResult> = { ok: true, data: { user } };
   return Response.json(response, { status: 200 });

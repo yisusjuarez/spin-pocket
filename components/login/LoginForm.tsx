@@ -9,7 +9,7 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [identifierError, setIdentifierError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const { login, isPending, error: serverError } = useLogin();
+  const { handleLogin, isPending, error: serverError } = useLogin();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,7 +22,7 @@ export function LoginForm() {
 
     if (!identifierValidation.valid || !passwordValidation.valid) return;
 
-    login(identifier, password);
+    handleLogin(identifier, password);
   }
 
   return (
