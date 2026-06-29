@@ -2,43 +2,75 @@
 
 ## Architecture
 
-
 ### Routing
 
 **Choice:** App Router with Server Components by default
 
-This application uses the App Router, the modern routing system recommended by Next.js. Its file-based routing conventions make the project structure easy to understand and easy to scale as new routes and features are added. It also enables React Server Components by default, which reduces client-side JavaScript by keeping non interactive logic on the server and improves overall performance. 
+This application uses the App Router, the modern routing system recommended by Next.js. Its file-based routing conventions make the project structure easy to understand and scale as new routes and features are added.
+It also enables React Server Components by default, reducing client-side JavaScript by keeping non-interactive logic on the server and improving overall performance.
 
-### Rendering strategy
+---
 
-Server Components are used by default across the application. This reduces the amount of JavaScript shipped to the client and improves rendering performance in pages where interactivity is not required. 
-Client Components are introduced only where user interaction or browser APIs (if needed).
+### Rendering Strategy
 
-This approach also enables data fetching directly inside components using async Server Components, removing the need for separate data-fetching layers or client-side loading waterfalls.
+Server Components are the default across the application. This reduces the amount of JavaScript shipped to the client and improves rendering performance in pages where interactivity is not required.
+Client Components are used only when interactivity or browser APIs are needed.
+This approach also allows data fetching directly inside Server Components, avoiding unnecessary client-side loading states and request waterfalls.
 
-### State management
+---
+
+### State Management
 
 **Choice:** Zustand
 
-A wallet application manages several pieces of shared state including session, balance, transactions, and contacts. Redux was discarded early as it introduces too much complexity and introduces concepts like reducers, actions, sagas, and more.
+A wallet application manages several pieces of shared client-side state, including balance, transactions, and contacts. Redux was discarded due to its additional complexity, including concepts such as reducers, actions, and middleware, which are not justified for this scope.
+React Context was the main alternative. However, Context causes all consumers to re-render when the provided value changes, even if they do not depend on the updated value. While this can be mitigated by splitting contexts, it introduces additional boilerplate and architectural overhead.
+Zustand solves this with selector-based subscriptions, allowing components to subscribe only to the state they need. This avoids unnecessary re-renders and keeps state logic isolated in small, independent stores.
+Zustand is the single source of truth for client-side state. Mixing multiple state management solutions is avoided to keep data flow predictable.
 
-React Context was the main alternative. The core problem with Context is that every component consuming a context re-renders whenever any value in that context changes, regardless of whether that specific component cares about the updated value. 
-The typical workaround is splitting state into multiple smaller contexts, but that adds structural complexity and boilerplate as the application grows. 
-In a wallet with several independent state domains updating at different frequencies, this becomes a maintenance burden.
+---
 
-Zustand solves this with selector-based subscriptions: each component declares exactly which piece of state it needs, and only re-renders when that piece changes. State and logic live in small independent stores with no boilerplate, and adding a new domain does not require restructuring existing providers.
+### Backend API and Data
 
-Zustand is the single source of truth for all client side state. Mixing multiple state management solutions would create inconsistency and make the data flow harder to follow.
+All data fetching is done through Next.js API Routes, which act as a proxy layer between the client and the backend REST API.
+In this project, responses are mocked, but the structure mirrors a real integration so that replacing mocks with a real backend requires no changes on the client side.
+This approach keeps sensitive data such as API keys and credentials on the server, preventing exposure in the browser. The client only communicates with internal API Routes, which act as a security boundary.
 
-### Backend API and Data 
+---
 
-All data fetching goes through Next.js API Routes, which act as a proxy between the client and the backend REST API. In this project the responses are mocked, but the structure mirrors what a real integration would look like so swapping mocks for actual calls requires no changes to the client side.
+### Styling
 
-This approach keeps sensitive values like API tokens, credentials, and environment variables on the server and out of the browser entirely. The client never calls the external API directly, it only communicates with the internal API Routes, which acts as a natural security boundary (we avoid exposing the actual backend endpoint).
+**Choice:** Tailwind CSS
+Traditional CSS files tend to grow over time, leading to specificity conflicts and scattered styles. Tailwind avoids this by keeping styles colocated with the component, eliminating cascade issues and reducing context switching.
+Global CSS is reserved for design system primitives such as variables, tokens, and base styles. All component-level styling is handled through utility classes.
 
-### UI and logic separation
+---
 
-* **Server Components** handle data fetching and pass data down as props.
-* **Client Components** handle user interaction and local UI state.
-* **Zustand stores** hold shared client-side state that multiple components need to access or modify.
-* **Business rules** live in dedicated functions or hooks outside of components, so they can be tested independently from the UI.
+### Session and Authentication
+
+The session credential is stored in an `httpOnly` cookie set by the login API Route, never in `localStorage` or any client-side store. This is the correct security boundary: `localStorage` is readable by any JavaScript on the page, meaning an XSS payload can exfiltrate a token stored there. An `httpOnly` cookie is invisible to JavaScript entirely — the browser attaches it to requests automatically, and only the server can read or clear it.
+
+Cookie attributes used: `httpOnly`, `sameSite=lax` (CSRF protection for navigation requests), `secure` in production, `path=/`, `maxAge=24h`.
+
+In this project the cookie value is the mock user id, which is enough for a simulated session. In a real implementation this would be a signed, opaque token (JWT or server-side session id) so the server can verify integrity and revoke sessions independently of the user record.
+
+Server Components read the session via `lib/auth/session.ts → getSession()`, which calls `cookies()` from `next/headers`. This file cannot be imported in Client Components (Next.js enforces this through the `next/headers` module boundary), so the session credential stays on the server by construction.
+
+---
+
+### Testing
+
+**Runner:** Vitest with React Testing Library
+
+Tests are colocated with their source file — a `login.test.ts` lives next to `login.ts`, a `LoginForm.test.tsx` lives next to `LoginForm.tsx`. This makes it immediately clear what is tested and what is not, and keeps the test close to the code it covers.
+
+Unit tests focus on pure logic (validators, utilities) and critical Client Component behavior (validation fires before the API is called). Async Server Components and API Routes are not covered by unit tests since Vitest does not support them; those are candidates for E2E tests.
+
+---
+
+### UI and Logic Separation
+
+Server Components handle data fetching and pass data as props.
+Client Components handle user interaction and local UI state.
+Zustand stores manage shared client-side state across components.
+Business logic is kept in dedicated hooks or utility functions outside of UI components, making it easier to test and reuse independently.
