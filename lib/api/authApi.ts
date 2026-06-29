@@ -8,6 +8,16 @@ export async function login(
   return post<LoginResult>("/api/auth/login", { identifier, password });
 }
 
+export async function register(data: {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+}): Promise<ApiResponse<LoginResult>> {
+  return post<LoginResult>("/api/auth/register", data);
+}
+
 export async function logout(): Promise<void> {
   await fetch("/api/auth/logout", { method: "POST" });
 }

@@ -44,6 +44,34 @@ export async function checkPassword(userId: string, password: string): Promise<b
   return record?.password === password;
 }
 
+export async function isIdentifierTaken(
+  email: string,
+  phone: string
+): Promise<{ email: boolean; phone: boolean }> {
+  const users = await readUsers();
+  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedPhone = phone.replace(/[\s\-().]/g, "");
+  return {
+    email: users.some((u) => u.email.toLowerCase() === normalizedEmail),
+    phone: users.some((u) => u.phone.replace(/[\s\-().]/g, "") === normalizedPhone),
+  };
+}
+
+export async function createUser(data: {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+}): Promise<User> {
+  const users = await readUsers();
+  const id = `user-${Date.now()}`;
+  const newRecord: UserRecord = { id, ...data, balance: 0 };
+  users.push(newRecord);
+  await writeUsers(users);
+  const { password: _, ...user } = newRecord;
+  return user;
+}
+
 export async function updateUserBalance(userId: string, newBalance: number): Promise<void> {
   const users = await readUsers();
   const index = users.findIndex((u) => u.id === userId);

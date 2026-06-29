@@ -9,6 +9,20 @@
 This application uses the App Router, the modern routing system recommended by Next.js. Its file-based routing conventions make the project structure easy to understand and scale as new routes and features are added.
 It also enables React Server Components by default, reducing client-side JavaScript by keeping non-interactive logic on the server and improving overall performance.
 
+### Transaction flow routing
+
+The transaction flow is split across three distinct pages rather than managed as steps inside a single component:
+
+- `/transaction/new` — enter amount and recipient
+- `/transaction/confirm` — review summary before sending
+- `/transaction/[id]` — receipt and transaction detail
+
+Each step has its own URL. This means the browser's back button works naturally, users can bookmark or share a transaction detail link, and the confirmation page can be navigated to directly.
+
+The draft (amount + recipient) is passed from `/new` to `/confirm` via Zustand, since it is short-lived client state that does not need to be persisted or shared. If the user refreshes `/confirm` without a draft, they are redirected back to `/new`.
+
+Once a transaction is confirmed, the API returns the transaction ID and the user is navigated to `/transaction/[id]`. From that point the page is a Server Component that reads the record from the database, so the detail is always up to date and can be reopened from the transaction history on the home page.
+
 ---
 
 ### Rendering Strategy
@@ -21,12 +35,9 @@ This approach also allows data fetching directly inside Server Components, avoid
 
 ### State Management
 
-**Choice:** Zustand
+No global client-side state library is used. Every page in this application gets its data from the server: Server Components fetch directly from the database and pass data down as props, and Client Components manage only their own local UI state with `useState`.
 
-A wallet application manages several pieces of shared client-side state, including balance, transactions, and contacts. Redux was discarded due to its additional complexity, including concepts such as reducers, actions, and middleware, which are not justified for this scope.
-React Context was the main alternative. However, Context causes all consumers to re-render when the provided value changes, even if they do not depend on the updated value. While this can be mitigated by splitting contexts, it introduces additional boilerplate and architectural overhead.
-Zustand solves this with selector-based subscriptions, allowing components to subscribe only to the state they need. This avoids unnecessary re-renders and keeps state logic isolated in small, independent stores.
-Zustand is the single source of truth for client-side state. Mixing multiple state management solutions is avoided to keep data flow predictable.
+Data that needs to move between pages (such as the transaction draft) travels in the URL as search parameters, not in a client store. This keeps the data visible, bookmarkable, and correct on refresh without any synchronization logic.
 
 ---
 

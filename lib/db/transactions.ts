@@ -28,6 +28,17 @@ export async function getTransactionsByUserId(userId: string): Promise<Transacti
     }));
 }
 
+export async function getTransactionById(
+  id: string,
+  userId: string
+): Promise<TransactionRecord | undefined> {
+  const all = await readTransactions();
+  const tx = all.find((t) => t.id === id);
+  if (!tx) return undefined;
+  if (tx.fromUserId !== userId && tx.toUserId !== userId) return undefined;
+  return tx;
+}
+
 export async function addTransaction(record: TransactionRecord): Promise<void> {
   const transactions = await readTransactions();
   transactions.unshift(record);

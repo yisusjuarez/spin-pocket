@@ -1,5 +1,4 @@
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^\+?[1-9]\d{7,14}$/;
+import { EMAIL_REGEX, PHONE_REGEX } from "./patterns";
 
 function isEmail(value: string): boolean {
   return EMAIL_REGEX.test(value.trim());

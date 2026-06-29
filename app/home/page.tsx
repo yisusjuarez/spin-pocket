@@ -33,7 +33,9 @@ export default async function HomePage() {
         </Link>
       </div>
 
-      <TransactionList transactions={transactions} />
+      <div className="rounded-2xl bg-white px-4 shadow-sm">
+        <TransactionList transactions={transactions} />
+      </div>
     </main>
   );
 }
