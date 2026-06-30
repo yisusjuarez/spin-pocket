@@ -1,7 +1,7 @@
 #AGENTS.md
 
 ## Project Overview
-This is a Mini Wallet application. The goal is to build a clean, scalable, and production-ready frontend using Next.js (App Router).
+This is a Mini Wallet application. The goal is to build a clean, scalable, and production ready frontend using Next.js (App Router).
 
 ## Core Principle
 The codebase is the source of truth. Always prioritize existing patterns over external assumptions or generic best practices.

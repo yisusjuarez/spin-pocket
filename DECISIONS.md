@@ -1,5 +1,7 @@
 # Decisions
 
+[Back to README](README.md)
+
 ## Architecture
 
 ### Routing
@@ -13,8 +15,8 @@ It also enables React Server Components by default, reducing client-side JavaScr
 
 The transaction flow uses two pages and one modal overlay:
 
-- `/transaction/new` — enter amount and recipient; the confirm modal appears as an overlay on this same URL
-- `/transaction/[id]` — receipt and transaction detail
+- `/transaction/new`: enter amount and recipient; the confirm modal appears as an overlay on this same URL
+- `/transaction/[id]`: receipt and transaction detail
 
 The confirm step is a modal (`ConfirmModal`) rendered by `TransactionFlow`, a Client Component that owns the draft state. When the user clicks "Review", the draft is stored in local React state and the modal opens no URL change, no serialization to search params. "Back" clears the draft and closes the modal.
 
@@ -34,7 +36,7 @@ This approach also allows data fetching directly inside Server Components, avoid
 
 No global client-side state library is used. Every page in this application gets its data from the server: Server Components fetch directly from the database and pass data down as props, and Client Components manage only their own local UI state with `useState`.
 
-The transaction draft (amount + recipient) lives in local state inside `TransactionFlow` and is passed directly to `ConfirmModal` as a prop. There is no cross-page serialization and no global store — the data only exists for the duration of the current flow on `/transaction/new`.
+The transaction draft (amount + recipient) lives in local state inside `TransactionFlow` and is passed directly to `ConfirmModal` as a prop. There is no cross-page serialization and no global store. The data only exists for the duration of the current flow on `/transaction/new`.
 
 ---
 
@@ -42,8 +44,8 @@ The transaction draft (amount + recipient) lives in local state inside `Transact
 
 The three transaction business rules (amount > 0, amount within balance, recipient required) are enforced in two places:
 
-1. **Client-side in `AmountStep`** — pure validation functions run before the form opens the confirm modal. This gives immediate feedback without a network round trip, but it is a UX layer only. The client cannot be trusted.
-2. **Server-side in the API route** — the POST handler re-validates all three rules against the database before writing anything. This is the authoritative enforcement layer. A crafted request that bypasses the form is still rejected here.
+1. **Client-side in `AmountStep`:** pure validation functions run before the form opens the confirm modal. This gives immediate feedback without a network round trip, but it is a UX layer only. The client cannot be trusted.
+2. **Server-side in the API route:** the POST handler re-validates all three rules against the database before writing anything. This is the authoritative enforcement layer. A manual request that bypasses the form is still rejected here.
 
 ---
 
@@ -79,7 +81,7 @@ Global CSS is reserved for design system primitives such as variables, tokens, a
 
 The session credential is stored in an `httpOnly` cookie set by the login API Route, never in `localStorage` or any client-side store. 
 This is the correct security boundary: `localStorage` is readable by any JavaScript on the page, meaning an XSS payload can exfiltrate a token stored there. 
-An `httpOnly` cookie is invisible to JavaScript entirely — the browser attaches it to requests automatically, and only the server can read or clear it.
+An `httpOnly` cookie is invisible to JavaScript entirely. The browser attaches it to requests automatically, and only the server can read or clear it.
 
 Cookie attributes used: `httpOnly`, `sameSite=lax` (CSRF protection for navigation requests), `secure` in production, `path=/`, `maxAge=24h`.
 
@@ -95,7 +97,7 @@ This file cannot be imported in Client Components (Next.js enforces this through
 
 **Runner:** Vitest with React Testing Library
 
-Tests are colocated with their source file — a `login.test.ts` lives next to `login.ts`, a `LoginForm.test.tsx` lives next to `LoginForm.tsx`. 
+Tests are colocated with their source file: a `login.test.ts` lives next to `login.ts`, a `LoginForm.test.tsx` lives next to `LoginForm.tsx`. 
 This makes it immediately clear what is tested and what is not, and keeps the test close to the code it covers.
 
 Unit tests focus on pure logic (validators, utilities) and critical Client Component behavior (validation fires before the API is called). Async Server Components and API Routes are not covered by unit tests since Vitest does not support them those are covered by E2E tests instead.
@@ -125,4 +127,12 @@ In a real financial system this would be handled at the database level with a tr
 ### Session cookie stores a plain user id
 
 The `spin-pocket-session` cookie currently contains the user id in plain text. This is sufficient for a simulated session but would not be acceptable in production. 
-A real implementation would use a signed JWT or an opaque server-side session id so the server can verify integrity and revoke sessions without relying on the user record alone.
+A real implementation would use a signed JWT so the server can verify integrity and revoke sessions.
+
+### Passwords are stored in plain text
+
+Passwords in `mock-db/users.json` are plain strings. A real app would hash them before storage.
+
+### mock-db is a file-based simulation
+
+The `mock-db/` directory uses JSON files to simulate a database.

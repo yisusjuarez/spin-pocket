@@ -1,6 +1,8 @@
-# Spin Pocket — Mini Wallet
+# Spin Pocket: Mini Wallet
 
 A mini wallet web app built with Next.js 16, TypeScript, and Tailwind CSS.
+
+[Architecture decisions](DECISIONS.md) · [AI usage](AI_USAGE.md)
 
 ## Getting started
 
@@ -17,7 +19,7 @@ Open [http://localhost:3000](http://localhost:3000). The app redirects to `/logi
 
 ### Authentication
 - **Sign in** with an email address or phone number plus a password.
-- **Register** a new account — name, email, phone, and password (with confirmation). The account is persisted immediately in `mock-db/users.json`.
+- **Register** a new account with your name, email, phone, and password (with confirmation). The account is persisted immediately in `mock-db/users.json`.
 - **Sign out** from the navbar. Sessions are stored in an httpOnly cookie.
 
 ### Home screen (`/home`)
@@ -47,18 +49,18 @@ Open [http://localhost:3000](http://localhost:3000). The app redirects to `/logi
 
 ## Test accounts
 
-The two seed accounts live in `mock-db/users.json`:
+The two seed accounts live in `mock-db/users.json`. Passwords are plain text and the database is a JSON file simulation; this is for demo purposes only.
 
 | Name | Email | Phone | Password | Balance |
 |---|---|---|---|---|
-| Ana García | ana@example.com | +525511223344 | password123 | (live — changes as you transact) |
-| Carlos Méndez | carlos@example.com | +525599887766 | password123 | (live — changes as you transact) |
+| Ana García | ana@example.com | +525511223344 | password123 | (updates as you transact) |
+| Carlos Méndez | carlos@example.com | +525599887766 | password123 | (updates as you transact) |
 
 Login accepts **either email or phone number**.
 
 ### How to add a test user manually
 
-You can also create accounts through the **Register tab** on the login page — no file editing needed. The JSON approach below is useful when you want to seed a user with a specific balance or ID without going through the UI.
+You can also create accounts through the **Register tab** on the login page. No file editing needed. The JSON approach below is useful when you want to seed a user with a specific balance or ID without going through the UI.
 
 Open `mock-db/users.json` and append an entry following this shape:
 
@@ -75,7 +77,7 @@ Open `mock-db/users.json` and append an entry following this shape:
 
 - `id` must be unique across the array.
 - `balance` is stored in whole currency units (e.g., `8000` = $8,000.00).
-- No restart required — the JSON files are read on every request.
+- No restart required. The JSON files are read on every request.
 
 ### How to reset balances or transactions
 
@@ -93,7 +95,7 @@ To reset to a clean slate, edit those files directly. Deleting all entries from 
 
 ## Transaction scenarios
 
-### Sending money — success path
+### Sending money: success path
 
 1. Log in as **Ana** (`ana@example.com` / `password123`).
 2. Click **Send money**.
@@ -101,11 +103,11 @@ To reset to a clean slate, edit those files directly. Deleting all entries from 
 4. Click **Review**, then **Confirm**.
 5. You land on the receipt page. Ana's balance decreases; Carlos's increases.
 
-### Sending money — received transfer
+### Sending money: received transfer
 
 1. Log out and log in as **Carlos**.
 2. The transaction from step 5 above appears at the top of his list as **Received +$X.XX**.
-3. Click it — the detail page shows "You received" with Ana's name.
+3. Click it. The detail page shows "You received" with Ana's name.
 
 ### Error scenarios
 
@@ -117,7 +119,7 @@ Each account has special pre-loaded contacts that trigger specific server behavi
 | **Juan Error** / name contains `error` | Network error | Error banner + "Try again" button |
 | **Edén TimeOut** / name contains `timeout` | Request timeout (8 s) | Error banner + "Try again" button |
 | **Max Unknown** / name contains `unknown` | Unknown server error | Error banner + "Try again" button |
-| Any recipient + amount > balance | Insufficient funds | Inline validation error before sending — no modal opens |
+| Any recipient + amount > balance | Insufficient funds | Inline validation error; the confirm modal does not open |
 
 ---
 
@@ -127,7 +129,7 @@ Each account has special pre-loaded contacts that trigger specific server behavi
 # Unit + integration tests (Vitest)
 npm run test
 
-# E2E tests — builds the app first (~30 s on first run)
+# E2E tests: builds the app first
 npm run test:e2e
 ```
 

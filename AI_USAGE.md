@@ -1,8 +1,10 @@
 # AI Usage
 
+[Back to README](README.md)
+
 ## Tools
 
-Claude Code (claude.ai/code) was used throughout the project for code generation, implementation, and documentation. All interactions were conversational I described what I wanted and corrected the output when it missed the mark.
+Claude Code was used throughout the project for code generation, implementation, and documentation. All interactions were conversational I described what I wanted and corrected the output when it missed the mark.
 
 ---
 
@@ -12,15 +14,15 @@ Claude Code (claude.ai/code) was used throughout the project for code generation
 
 **Vitest + React Testing Library:** Claude proposed this combination for unit tests. I accepted it Vitest is fast, has native TypeScript support, and RTL keeps tests focused on user behavior rather than implementation details.
 
-**Playwright for E2E tests:** I added Playwright to complement the unit tests. Claude helped fill out the test cases error scenarios, the received transaction cross-user flow, and fixing selector issues (e.g. filtering the Next.js route announcer from alert queries).
+**Playwright for E2E tests:** I added Playwright to complement the unit tests. Claude helped fill out the test cases error scenarios and configuration (e.g. skip vitest tests for validation).
 
-**`lib/db/` as the only entry point to mock data:** Claude proposed isolating all file reads and writes behind a dedicated layer so the rest of the app only calls functions, not touches files. I kept it because it mirrors the separation that would exist with a real database.
+**`lib/db/` as the only entry point to mock data:** Claude proposed isolating all file reads and writes behind a dedicated layer so the rest of the app only calls functions, not touches files. I kept it because it mirrors a real database.
 
 ---
 
 ## What Claude suggested and I rejected or corrected
 
-**Session in Zustand + localStorage (rejected):** Claude's first implementation stored the session token in a Zustand store persisted to `localStorage`. I flagged this as an XSS vulnerability any JavaScript on the page can read `localStorage`, so a compromised third-party script or injected payload can steal the session. I proposed using an `httpOnly` cookie instead, which is invisible to JavaScript entirely. Claude implemented it.
+**Session in Zustand + localStorage (rejected):** Claude initially suggested persisting the session in Zustand using localStorage. I rejected that approach because it exposes the session to XSS attacks. Instead, we moved the session to an httpOnly cookie managed on the server with Next.js cookies(), preventing client-side JavaScript from accessing the session value.
 
 **Zustand for cross-page transaction draft (rejected):** Claude used a Zustand store to carry the amount and recipient from `/transaction/new` to `/transaction/confirm`. This introduced a bug resetting the store on submission triggered a redirect guard before navigation completed. I pointed out that Zustand was unnecessary. Claude then proposed URL search parameters for the separate confirm page, but I said I didn't like exposing the draft in the URL and the separate page was the wrong model. I asked for a modal instead so the data stays in local React state on the same page and never touches the URL or any store.
 
