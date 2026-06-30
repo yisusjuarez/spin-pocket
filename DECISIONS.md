@@ -136,3 +136,19 @@ Passwords in `mock-db/users.json` are plain strings. A real app would hash them 
 ### mock-db is a file-based simulation
 
 The `mock-db/` directory uses JSON files to simulate a database.
+
+---
+
+## Error scenario triggering
+
+The confirmation step combines both approaches. Recipients whose name contains a keyword (`error`, `timeout`, `unknown`) always trigger the corresponding scenario, making those cases fully reproducible and directly testable. For all other recipients, the API applies a random roll on each request: ~12% chance of a network error, ~8% unknown error, ~3% timeout, and ~77% success. This satisfies the challenge requirement for random behavior while keeping the keyword contacts reliable for E2E tests.
+
+---
+
+## What I would do differently with more time
+
+- Include a component library like Shadcn
+- Improve the UI with animations and design a better theme
+- Simulate JWT instead of using the user id as a token.
+- Add pagination to the transaction list on the home screen.
+- Toast component for error handling and notifications (Succes transfer, contact saved, etc.).

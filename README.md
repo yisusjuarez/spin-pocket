@@ -115,11 +115,31 @@ Each account has special pre-loaded contacts that trigger specific server behavi
 
 | Contact / keyword in name | Scenario | What you see |
 |---|---|---|
-| Any real contact or manual recipient | **Success** | Receipt with "You sent" |
-| **Juan Error** / name contains `error` | Network error | Error banner + "Try again" button |
-| **Edén TimeOut** / name contains `timeout` | Request timeout (8 s) | Error banner + "Try again" button |
-| **Max Unknown** / name contains `unknown` | Unknown server error | Error banner + "Try again" button |
+| Any real contact or manual recipient | **Success (~77%)** or random error | Receipt with "You sent", or error banner + "Try again" |
+| **Juan Error** / name contains `error` | Network error (guaranteed) | Error banner + "Try again" button |
+| **Edén TimeOut** / name contains `timeout` | Request timeout — 8 s (guaranteed) | Error banner + "Try again" button |
+| **Max Unknown** / name contains `unknown` | Unknown server error (guaranteed) | Error banner + "Try again" button |
 | Any recipient + amount > balance | Insufficient funds | Inline validation error; the confirm modal does not open |
+
+---
+
+## Libraries
+
+| Library | Purpose |
+|---|---|
+| Next.js 16 | Framework (App Router, Server Components, API Routes) |
+| React 19 | UI rendering |
+| TypeScript 5 | Static typing |
+| Tailwind CSS 4 | Utility-first styling |
+| Vitest 4 | Unit and component test runner |
+| React Testing Library | Component testing |
+| Playwright | End-to-end testing |
+
+---
+
+## Time invested
+
+Around 9-10 hours.
 
 ---
 

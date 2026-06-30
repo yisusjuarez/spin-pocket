@@ -16,6 +16,14 @@ function detectScenario(name: string): "network" | "timeout" | "unknown" | null 
   return null;
 }
 
+function randomScenario(): "network" | "timeout" | "unknown" | null {
+  const roll = Math.random();
+  if (roll < 0.12) return "network";
+  if (roll < 0.20) return "unknown";
+  if (roll < 0.23) return "timeout";
+  return null;
+}
+
 export async function POST(request: Request): Promise<Response> {
   const session = await getSession();
   if (!session) {
@@ -67,7 +75,7 @@ export async function POST(request: Request): Promise<Response> {
 
   await sleep(800);
 
-  const scenario = detectScenario(recipientName);
+  const scenario = detectScenario(recipientName) ?? randomScenario();
 
   if (scenario === "network") {
     const response: ApiResponse<never> = {
