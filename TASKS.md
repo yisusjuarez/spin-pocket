@@ -16,7 +16,7 @@
 ## Technical Requirements
 - [x] Next.js + TypeScript
 - [x] API Routes with mocked data (auth, contacts, transactions)
-- [x] State management — no global store; data flows via props and URL search params (justified in DECISIONS.md)
+- [x] State management — no global store; data flows via props and local React state (justified in DECISIONS.md)
 - [x] SSR/CSR decisions justified per page (DECISIONS.md)
 - [x] Unit tests — validations (login + transaction), login form, useLogin and useTransactionSubmit hooks
 - [x] E2E tests with Playwright — login, logout, transaction happy path, error scenario, history navigation

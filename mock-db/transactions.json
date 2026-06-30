@@ -1,92 +1,182 @@
 [
   {
-    "id": "tx-1782777602029",
+    "id": "tx-1782829136191",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": "user-2",
+    "toName": "Carlos Méndez",
+    "amount": 5000,
+    "balanceAfter": 6605,
+    "createdAt": 1782829136191
+  },
+  {
+    "id": "tx-1782828595587",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Jesus",
+    "amount": 10,
+    "balanceAfter": 11605,
+    "createdAt": 1782828595587
+  },
+  {
+    "id": "tx-1782828545314",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Jesus",
+    "amount": 1000,
+    "balanceAfter": 11615,
+    "createdAt": 1782828545314
+  },
+  {
+    "id": "tx-1782780666493",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Jesus",
+    "amount": 10,
+    "balanceAfter": 12615,
+    "createdAt": 1782780666493
+  },
+  {
+    "id": "tx-1782780548969",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Jesus",
+    "amount": 1000,
+    "balanceAfter": 12625,
+    "createdAt": 1782780548969
+  },
+  {
+    "id": "tx-1782780507237",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Jesus",
+    "amount": 1000,
+    "balanceAfter": 13625,
+    "createdAt": 1782780507237
+  },
+  {
+    "id": "tx-1782780200341",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": "user-2",
+    "toName": "Carlos Méndez",
+    "amount": 50,
+    "balanceAfter": 14625,
+    "createdAt": 1782780200341
+  },
+  {
+    "id": "tx-1782780195188",
     "fromUserId": "user-1",
     "fromName": "Ana García",
     "toUserId": null,
     "toName": "Link Test",
     "amount": 25,
-    "balanceAfter": 12300,
-    "createdAt": 1782777602029
+    "balanceAfter": 14675,
+    "createdAt": 1782780195188
   },
   {
-    "id": "tx-1782777574901",
+    "id": "tx-1782780167822",
     "fromUserId": "user-1",
     "fromName": "Ana García",
     "toUserId": null,
     "toName": "Test User",
     "amount": 50,
-    "balanceAfter": 12325,
-    "createdAt": 1782777574901
+    "balanceAfter": 14700,
+    "createdAt": 1782780167822
   },
   {
-    "id": "tx-1782777251100",
+    "id": "tx-1782779890369",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": "user-2",
+    "toName": "Carlos Méndez",
+    "amount": 50,
+    "balanceAfter": 14750,
+    "createdAt": 1782779890369
+  },
+  {
+    "id": "tx-1782779885206",
     "fromUserId": "user-1",
     "fromName": "Ana García",
     "toUserId": null,
     "toName": "Link Test",
     "amount": 25,
-    "balanceAfter": 12375,
-    "createdAt": 1782777251100
+    "balanceAfter": 14800,
+    "createdAt": 1782779885206
   },
   {
-    "id": "tx-1782777004579",
-    "fromUserId": "user-1",
-    "fromName": "Ana García",
-    "toUserId": null,
-    "toName": "Link Test",
-    "amount": 25,
-    "balanceAfter": 12400,
-    "createdAt": 1782777004579
-  },
-  {
-    "id": "tx-1782776992376",
+    "id": "tx-1782779858087",
     "fromUserId": "user-1",
     "fromName": "Ana García",
     "toUserId": null,
     "toName": "Test User",
     "amount": 50,
-    "balanceAfter": 12425,
-    "createdAt": 1782776992376
+    "balanceAfter": 14825,
+    "createdAt": 1782779858087
   },
   {
-    "id": "tx-1782776772115",
+    "id": "tx-1782779792642",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": "user-2",
+    "toName": "Carlos Méndez",
+    "amount": 50,
+    "balanceAfter": 14875,
+    "createdAt": 1782779792642
+  },
+  {
+    "id": "tx-1782779787485",
     "fromUserId": "user-1",
     "fromName": "Ana García",
     "toUserId": null,
     "toName": "Link Test",
     "amount": 25,
-    "balanceAfter": 12475,
-    "createdAt": 1782776772115
+    "balanceAfter": 14925,
+    "createdAt": 1782779787485
   },
   {
-    "id": "tx-1782776527208",
-    "fromUserId": "user-3",
-    "fromName": "Jesus Juarez",
+    "id": "tx-1782779760264",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
     "toUserId": null,
-    "toName": "andy",
-    "amount": 10,
-    "balanceAfter": 1100.92,
-    "createdAt": 1782776527208
+    "toName": "Test User",
+    "amount": 50,
+    "balanceAfter": 14950,
+    "createdAt": 1782779760264
   },
   {
-    "id": "tx-1782772985530",
-    "fromUserId": "user-3",
-    "fromName": "Jesus Juarez",
+    "id": "tx-seed-003",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
     "toUserId": null,
-    "toName": "Jesus",
-    "amount": 10,
-    "balanceAfter": 1110.92,
-    "createdAt": 1782772985530
+    "toName": "Sofía Vera",
+    "amount": 300,
+    "balanceAfter": 15000,
+    "createdAt": 1748563200000
   },
   {
-    "id": "tx-1782772667692",
-    "fromUserId": "user-3",
-    "fromName": "Jesus Juarez",
-    "toUserId": null,
-    "toName": "Jesus",
-    "amount": 9.58,
-    "balanceAfter": 1120.92,
-    "createdAt": 1782772667692
+    "id": "tx-seed-002",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": "user-2",
+    "toName": "Carlos Méndez",
+    "amount": 200,
+    "balanceAfter": 15300,
+    "createdAt": 1745884800000
+  },
+  {
+    "id": "tx-seed-001",
+    "fromUserId": "user-2",
+    "fromName": "Carlos Méndez",
+    "toUserId": "user-1",
+    "toName": "Ana García",
+    "amount": 500,
+    "balanceAfter": 4500,
+    "createdAt": 1743206400000
   }
 ]

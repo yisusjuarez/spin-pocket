@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { TransactionRecord } from "@/types/transaction";
+import { DetailRow } from "@/components/ui/DetailRow";
 
 interface TransactionDetailProps {
   transaction: TransactionRecord;
@@ -16,40 +17,49 @@ export function TransactionDetail({ transaction, isSent }: TransactionDetailProp
     minute: "2-digit",
   });
 
-  const row = (label: string, value: string) => (
-    <div className="flex items-center justify-between py-3">
-      <span className="text-sm text-gray-500">{label}</span>
-      <span className="text-sm font-medium text-gray-900">{value}</span>
-    </div>
-  );
-
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col items-center gap-3 py-2">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-2xl">
-          ✓
+      <div className="flex flex-col items-center gap-3 py-4">
+        <div
+          className={`flex h-14 w-14 items-center justify-center rounded-full ${
+            isSent ? "bg-brand-light" : "bg-accent-light"
+          }`}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M5 12l5 5L19 7"
+              stroke={isSent ? "#7C3AED" : "#EA580C"}
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
         </div>
         <div className="text-center">
-          <p className="text-sm text-gray-500">{isSent ? "You sent" : "You received"}</p>
-          <p className="text-3xl font-semibold text-gray-900">
+          <p className={`text-xs font-semibold uppercase tracking-widest ${isSent ? "text-brand" : "text-accent"}`}>
+            {isSent ? "You sent" : "You received"}
+          </p>
+          <p className="mt-1 text-4xl font-bold tracking-tight text-gray-900">
             ${transaction.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </p>
         </div>
       </div>
 
-      <div className="divide-y divide-gray-100 rounded-2xl border border-gray-100 px-4">
-        {row(isSent ? "To" : "From", counterpartName)}
-        {isSent && row(
-          "Balance after",
-          `$${transaction.balanceAfter.toLocaleString("en-US", { minimumFractionDigits: 2 })}`
+      <div className="divide-y divide-gray-100 rounded-2xl bg-white px-4 ring-1 ring-gray-900/5">
+        <DetailRow label={isSent ? "To" : "From"} value={counterpartName} />
+        {isSent && (
+          <DetailRow
+            label="Balance after"
+            value={`$${transaction.balanceAfter.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
+          />
         )}
-        {row("Date", date)}
-        {row("Reference", transaction.id)}
+        <DetailRow label="Date" value={date} />
+        <DetailRow label="Reference" value={transaction.id} />
       </div>
 
       <Link
         href="/home"
-        className="block w-full rounded-lg border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+        className="block w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-center text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
       >
         Back to home
       </Link>

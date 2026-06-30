@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { getUserById } from "@/lib/db/users";
 import { getContactsByUserId } from "@/lib/db/contacts";
-import { AmountStep } from "@/components/transaction/AmountStep";
+import { TransactionFlow } from "@/components/transaction/TransactionFlow";
 
 export default async function NewTransactionPage() {
   const session = await getSession();
@@ -15,11 +15,5 @@ export default async function NewTransactionPage() {
 
   if (!user) redirect("/login");
 
-  return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8">
-      <div className="rounded-2xl bg-white px-6 py-8 shadow-sm">
-        <AmountStep user={user} contacts={contacts} />
-      </div>
-    </main>
-  );
+  return <TransactionFlow user={user} contacts={contacts} />;
 }

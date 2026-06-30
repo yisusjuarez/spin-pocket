@@ -10,5 +10,18 @@
     "userId": "user-3",
     "name": "andy",
     "email": "andy@gmail.com"
+  },
+  {
+    "id": "contact-1782780506401",
+    "userId": "user-1",
+    "name": "Jesus",
+    "email": "jesus@gmail.com"
+  },
+  {
+    "id": "contact-1782829135373",
+    "userId": "user-1",
+    "name": "Carlos Méndez",
+    "email": "carlos@example.com",
+    "phone": "+525599887766"
   }
 ]

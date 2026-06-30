@@ -11,15 +11,12 @@ It also enables React Server Components by default, reducing client-side JavaScr
 
 ### Transaction flow routing
 
-The transaction flow is split across three distinct pages rather than managed as steps inside a single component:
+The transaction flow uses two pages and one modal overlay:
 
-- `/transaction/new` — enter amount and recipient
-- `/transaction/confirm` — review summary before sending
+- `/transaction/new` — enter amount and recipient; the confirm modal appears as an overlay on this same URL
 - `/transaction/[id]` — receipt and transaction detail
 
-Each step has its own URL. This means the browser's back button works naturally, users can bookmark or share a transaction detail link, and the confirmation page can be navigated to directly.
-
-The draft (amount + recipient) is passed from `/new` to `/confirm` via URL search parameters. This keeps the data visible, bookmarkable, and correct on refresh without any client-side synchronization. If the user navigates to `/confirm` without valid search params, the Server Component redirects them back to `/new`.
+The confirm step is a modal (`ConfirmModal`) rendered by `TransactionFlow`, a Client Component that owns the draft state. When the user clicks "Review", the draft is stored in local React state and the modal opens no URL change, no serialization to search params. "Back" clears the draft and closes the modal.
 
 Once a transaction is confirmed, the API returns the transaction ID and the user is navigated to `/transaction/[id]`. From that point the page is a Server Component that reads the record from the database, so the detail is always up to date and can be reopened from the transaction history on the home page.
 
@@ -37,7 +34,7 @@ This approach also allows data fetching directly inside Server Components, avoid
 
 No global client-side state library is used. Every page in this application gets its data from the server: Server Components fetch directly from the database and pass data down as props, and Client Components manage only their own local UI state with `useState`.
 
-Data that needs to move between pages (such as the transaction draft) travels in the URL as search parameters, not in a client store. This keeps the data visible, bookmarkable, and correct on refresh without any synchronization logic.
+The transaction draft (amount + recipient) lives in local state inside `TransactionFlow` and is passed directly to `ConfirmModal` as a prop. There is no cross-page serialization and no global store — the data only exists for the duration of the current flow on `/transaction/new`.
 
 ---
 
@@ -45,9 +42,8 @@ Data that needs to move between pages (such as the transaction draft) travels in
 
 The three transaction business rules (amount > 0, amount within balance, recipient required) are enforced in two places:
 
-1. **Client-side in `AmountStep`** — pure validation functions run before the form navigates to `/confirm`. This gives immediate feedback without a network round trip, but it is a UX layer only. The client cannot be trusted.
+1. **Client-side in `AmountStep`** — pure validation functions run before the form opens the confirm modal. This gives immediate feedback without a network round trip, but it is a UX layer only. The client cannot be trusted.
 2. **Server-side in the API route** — the POST handler re-validates all three rules against the database before writing anything. This is the authoritative enforcement layer. A crafted request that bypasses the form is still rejected here.
-The confirm page (`/transaction/confirm`) is a Server Component that also checks amount > 0 and amount against the user's current balance before rendering the form. This catches the case where the balance changed between filling the form and reaching confirmation, without waiting for an API error.
 
 ---
 
@@ -102,7 +98,7 @@ This file cannot be imported in Client Components (Next.js enforces this through
 Tests are colocated with their source file — a `login.test.ts` lives next to `login.ts`, a `LoginForm.test.tsx` lives next to `LoginForm.tsx`. 
 This makes it immediately clear what is tested and what is not, and keeps the test close to the code it covers.
 
-Unit tests focus on pure logic (validators, utilities) and critical Client Component behavior (validation fires before the API is called). Async Server Components and API Routes are not covered by unit tests since Vitest does not support them — those are covered by E2E tests instead.
+Unit tests focus on pure logic (validators, utilities) and critical Client Component behavior (validation fires before the API is called). Async Server Components and API Routes are not covered by unit tests since Vitest does not support them those are covered by E2E tests instead.
 
 **E2E runner:** Playwright
 

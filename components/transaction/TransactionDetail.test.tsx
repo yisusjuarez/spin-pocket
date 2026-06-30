@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { TransactionDetail } from "./TransactionDetail";
 
 vi.mock("next/link", () => ({
-  default: ({ children, href }: any) => <a href={href}>{children}</a>,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a>,
 }));
 
 const tx = {
@@ -29,6 +29,28 @@ describe("TransactionDetail", () => {
   it("shows received direction label", () => {
     render(<TransactionDetail transaction={tx} isSent={false} />);
     expect(screen.getByText(/you received/i)).toBeDefined();
+  });
+
+  it("shows To: with recipient name when sent", () => {
+    render(<TransactionDetail transaction={tx} isSent={true} />);
+    expect(screen.getByText("To")).toBeDefined();
+    expect(screen.getByText("Carlos")).toBeDefined();
+  });
+
+  it("shows From: with sender name when received", () => {
+    render(<TransactionDetail transaction={tx} isSent={false} />);
+    expect(screen.getByText("From")).toBeDefined();
+    expect(screen.getByText("Ana")).toBeDefined();
+  });
+
+  it("shows balance after when sent", () => {
+    render(<TransactionDetail transaction={tx} isSent={true} />);
+    expect(screen.getByText(/800\.00/)).toBeDefined();
+  });
+
+  it("hides balance after when received", () => {
+    render(<TransactionDetail transaction={tx} isSent={false} />);
+    expect(screen.queryByText(/800\.00/)).toBeNull();
   });
 
   it("has a link back to home", () => {

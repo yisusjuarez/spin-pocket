@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { TransactionList } from "./TransactionList";
 
 vi.mock("next/link", () => ({
-  default: ({ children, href }: any) => <a href={href}>{children}</a>,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a>,
 }));
 
 const tx = { id: "tx-1", type: "sent" as const, counterpartName: "Carlos", amount: 100, createdAt: Date.now() };

@@ -5,7 +5,7 @@
     "email": "ana@example.com",
     "phone": "+525511223344",
     "password": "password123",
-    "balance": 12300
+    "balance": 6605
   },
   {
     "id": "user-2",
@@ -13,14 +13,6 @@
     "email": "carlos@example.com",
     "phone": "+525599887766",
     "password": "password123",
-    "balance": 3200.5
-  },
-  {
-    "id": "user-3",
-    "name": "Jesus Juarez",
-    "email": "jesus@gmail.com",
-    "phone": "+525599887766",
-    "password": "password",
-    "balance": 1100.92
+    "balance": 9850
   }
 ]

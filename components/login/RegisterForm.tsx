@@ -4,153 +4,126 @@ import { useState } from "react";
 import { validateName, validateEmail, validatePhone, validateConfirmPassword } from "@/lib/validation/register";
 import { validatePassword } from "@/lib/validation/login";
 import { useRegister } from "@/hooks/useRegister";
+import { FormField, inputClass } from "@/components/ui/FormField";
+import { ErrorBanner } from "@/components/ui/ErrorBanner";
+
+type RegisterFields = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+};
+
+type RegisterErrors = {
+  [K in keyof RegisterFields]: string | null;
+};
 
 export function RegisterForm() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [nameError, setNameError] = useState<string | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
-
+  const [fields, setFields] = useState<RegisterFields>({ name: "", email: "", phone: "", password: "", confirmPassword: "" });
+  const [errors, setErrors] = useState<RegisterErrors>({ name: null, email: null, phone: null, password: null, confirmPassword: null });
   const { handleRegister, isPending, error: serverError } = useRegister();
+
+  function update(field: keyof typeof fields, value: string) {
+    setFields((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: null }));
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const nameV = validateName(name);
-    const emailV = validateEmail(email);
-    const phoneV = validatePhone(phone);
-    const passwordV = validatePassword(password);
-    const confirmV = validateConfirmPassword(password, confirmPassword);
+    const nameV = validateName(fields.name);
+    const emailV = validateEmail(fields.email);
+    const phoneV = validatePhone(fields.phone);
+    const passwordV = validatePassword(fields.password);
+    const confirmV = validateConfirmPassword(fields.password, fields.confirmPassword);
 
-    setNameError(nameV.error ?? null);
-    setEmailError(emailV.error ?? null);
-    setPhoneError(phoneV.error ?? null);
-    setPasswordError(passwordV.error ?? null);
-    setConfirmPasswordError(confirmV.error ?? null);
+    setErrors({
+      name: nameV.error ?? null,
+      email: emailV.error ?? null,
+      phone: phoneV.error ?? null,
+      password: passwordV.error ?? null,
+      confirmPassword: confirmV.error ?? null,
+    });
 
     if (!nameV.valid || !emailV.valid || !phoneV.valid || !passwordV.valid || !confirmV.valid) return;
 
-    handleRegister({ name, email, phone, password, confirmPassword });
-  }
-
-  const inputClass = (error: string | null) =>
-    [
-      "w-full rounded-lg border px-3 py-2.5 text-sm outline-none transition",
-      "placeholder:text-gray-400 disabled:opacity-50",
-      error
-        ? "border-red-400 focus:ring-2 focus:ring-red-200"
-        : "border-gray-300 focus:border-gray-500 focus:ring-2 focus:ring-gray-200",
-    ].join(" ");
-
-  function field(
-    id: string,
-    label: string,
-    input: React.ReactNode,
-    error: string | null
-  ) {
-    return (
-      <div className="flex flex-col gap-1">
-        <label htmlFor={id} className="text-xs font-medium text-gray-600">
-          {label}
-        </label>
-        {input}
-        {error && <p className="text-xs text-red-500" role="alert">{error}</p>}
-      </div>
-    );
+    handleRegister(fields);
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
-      {field("name", "Full name",
+      <FormField id="name" label="Full name" error={errors.name}>
         <input
           id="name"
           type="text"
           autoComplete="name"
-          value={name}
-          onChange={(e) => { setName(e.target.value); setNameError(null); }}
+          value={fields.name}
+          onChange={(e) => update("name", e.target.value)}
           disabled={isPending}
           placeholder="Ana García"
-          className={inputClass(nameError)}
-        />,
-        nameError
-      )}
+          className={inputClass(errors.name)}
+        />
+      </FormField>
 
-      {field("reg-email", "Email",
+      <FormField id="reg-email" label="Email" error={errors.email}>
         <input
           id="reg-email"
           type="email"
           autoComplete="email"
-          value={email}
-          onChange={(e) => { setEmail(e.target.value); setEmailError(null); }}
+          value={fields.email}
+          onChange={(e) => update("email", e.target.value)}
           disabled={isPending}
           placeholder="you@example.com"
-          className={inputClass(emailError)}
-        />,
-        emailError
-      )}
+          className={inputClass(errors.email)}
+        />
+      </FormField>
 
-      {field("reg-phone", "Phone number",
+      <FormField id="reg-phone" label="Phone number" error={errors.phone}>
         <input
           id="reg-phone"
           type="tel"
           autoComplete="tel"
-          value={phone}
-          onChange={(e) => { setPhone(e.target.value); setPhoneError(null); }}
+          value={fields.phone}
+          onChange={(e) => update("phone", e.target.value)}
           disabled={isPending}
           placeholder="+52 55 1234 5678"
-          className={inputClass(phoneError)}
-        />,
-        phoneError
-      )}
+          className={inputClass(errors.phone)}
+        />
+      </FormField>
 
-      {field("reg-password", "Password",
+      <FormField id="reg-password" label="Password" error={errors.password}>
         <input
           id="reg-password"
           type="password"
           autoComplete="new-password"
-          value={password}
-          onChange={(e) => { setPassword(e.target.value); setPasswordError(null); }}
+          value={fields.password}
+          onChange={(e) => update("password", e.target.value)}
           disabled={isPending}
           placeholder="••••••••"
-          className={inputClass(passwordError)}
-        />,
-        passwordError
-      )}
+          className={inputClass(errors.password)}
+        />
+      </FormField>
 
-      {field("confirm-password", "Confirm password",
+      <FormField id="confirm-password" label="Confirm password" error={errors.confirmPassword}>
         <input
           id="confirm-password"
           type="password"
           autoComplete="new-password"
-          value={confirmPassword}
-          onChange={(e) => { setConfirmPassword(e.target.value); setConfirmPasswordError(null); }}
+          value={fields.confirmPassword}
+          onChange={(e) => update("confirmPassword", e.target.value)}
           disabled={isPending}
           placeholder="••••••••"
-          className={inputClass(confirmPasswordError)}
-        />,
-        confirmPasswordError
-      )}
+          className={inputClass(errors.confirmPassword)}
+        />
+      </FormField>
 
-      {serverError && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700"
-        >
-          {serverError.message}
-        </div>
-      )}
+      {serverError && <ErrorBanner error={serverError} />}
 
       <button
         type="submit"
         disabled={isPending}
-        className="mt-1 w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="mt-1 w-full rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isPending ? "Creating account…" : "Create account"}
       </button>

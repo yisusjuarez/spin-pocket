@@ -22,18 +22,18 @@ export default async function HomePage() {
       <BalanceCard user={user} />
 
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-900">
-          Recent transactions
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+          Recent
         </h2>
         <Link
           href="/transaction/new"
-          className="rounded-full bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-700"
+          className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-hover"
         >
-          New transaction
+          Send money
         </Link>
       </div>
 
-      <div className="rounded-2xl bg-white px-4 shadow-sm">
+      <div className="rounded-2xl bg-white px-4 shadow-sm ring-1 ring-gray-900/5">
         <TransactionList transactions={transactions} />
       </div>
     </main>

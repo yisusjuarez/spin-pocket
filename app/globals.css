@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand: #7C3AED;
+  --color-brand-hover: #6D28D9;
+  --color-brand-light: #EDE9FE;
+  --color-accent: #EA580C;
+  --color-accent-hover: #C2410C;
+  --color-accent-light: #FFF7ED;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
