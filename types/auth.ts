@@ -6,13 +6,11 @@ export interface User {
   balance: number;
 }
 
-/** Server-side only. Never exposed to the client. */
 export interface Session {
   user: User;
   issuedAt: number;
 }
 
-/** What the login API route returns to the client (no credential). */
 export interface LoginResult {
   user: User;
 }

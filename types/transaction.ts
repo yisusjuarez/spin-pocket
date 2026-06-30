@@ -1,4 +1,3 @@
-/** Raw record as stored in mock-db/transactions.json */
 export interface TransactionRecord {
   id: string;
   fromUserId: string;
@@ -11,7 +10,6 @@ export interface TransactionRecord {
   createdAt: number;
 }
 
-/** What the home transaction list receives */
 export interface Transaction {
   id: string;
   type: "sent" | "received";
@@ -21,7 +19,6 @@ export interface Transaction {
   createdAt: number;
 }
 
-/** What the transaction API returns after a successful submission */
 export interface TransactionResult {
   id: string;
   amount: number;

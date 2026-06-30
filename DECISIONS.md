@@ -19,7 +19,7 @@ The transaction flow is split across three distinct pages rather than managed as
 
 Each step has its own URL. This means the browser's back button works naturally, users can bookmark or share a transaction detail link, and the confirmation page can be navigated to directly.
 
-The draft (amount + recipient) is passed from `/new` to `/confirm` via Zustand, since it is short-lived client state that does not need to be persisted or shared. If the user refreshes `/confirm` without a draft, they are redirected back to `/new`.
+The draft (amount + recipient) is passed from `/new` to `/confirm` via URL search parameters. This keeps the data visible, bookmarkable, and correct on refresh without any client-side synchronization. If the user navigates to `/confirm` without valid search params, the Server Component redirects them back to `/new`.
 
 Once a transaction is confirmed, the API returns the transaction ID and the user is navigated to `/transaction/[id]`. From that point the page is a Server Component that reads the record from the database, so the detail is always up to date and can be reopened from the transaction history on the home page.
 
@@ -41,39 +41,57 @@ Data that needs to move between pages (such as the transaction draft) travels in
 
 ---
 
+### Business Rule Validation
+
+The three transaction business rules (amount > 0, amount within balance, recipient required) are enforced in two places:
+
+1. **Client-side in `AmountStep`** — pure validation functions run before the form navigates to `/confirm`. This gives immediate feedback without a network round trip, but it is a UX layer only. The client cannot be trusted.
+2. **Server-side in the API route** — the POST handler re-validates all three rules against the database before writing anything. This is the authoritative enforcement layer. A crafted request that bypasses the form is still rejected here.
+The confirm page (`/transaction/confirm`) is a Server Component that also checks amount > 0 and amount against the user's current balance before rendering the form. This catches the case where the balance changed between filling the form and reaching confirmation, without waiting for an API error.
+
+---
+
 ### Backend API and Data
 
 All data fetching is done through Next.js API Routes, which act as a proxy layer between the client and the backend REST API.
 In this project, responses are mocked, but the structure mirrors a real integration so that replacing mocks with a real backend requires no changes on the client side.
 This approach keeps sensitive data such as API keys and credentials on the server, preventing exposure in the browser. The client only communicates with internal API Routes, which act as a security boundary.
 
-Server Components read data by calling the database layer directly, without going through an API route. This avoids an unnecessary internal HTTP round trip while still keeping all data access server side. API routes handle operations triggered from the client (mutations and client side fetches).
+Server Components read data by calling the database layer directly, without going through an API route. 
+This avoids an unnecessary internal HTTP round trip while still keeping all data access server side. API routes handle operations triggered from the client (mutations and client side fetches).
 
 ### Mock Database
 
-Data is stored in JSON files under `mock-db/` and accessed through a dedicated layer in `lib/db/`. Each file corresponds to a domain entity (`users.json`, `transactions.json`). The DB layer functions (`getUserById`, `getTransactionsByUserId`, `addTransaction`, etc.) handle all reads and writes, so no other part of the code touches the files directly.
+Data is stored in JSON files under `mock-db/` and accessed through a dedicated layer in `lib/db/`. Each file corresponds to a domain entity (`users.json`, `transactions.json`). 
+The DB layer functions (`getUserById`, `getTransactionsByUserId`, `addTransaction`, etc.) handle all reads and writes, so no other part of the code touches the files directly.
 
-This mirrors the separation that would exist with a real database: the rest of the application only knows about the functions, not the storage details. Swapping the JSON files for a real database only requires updating `lib/db/`.
+This mirrors the separation that would exist with a real database: the rest of the application only knows about the functions, not the storage details. 
+Swapping the JSON files for a real database only requires updating `lib/db/`.
 
 ---
 
 ### Styling
 
 **Choice:** Tailwind CSS
-Traditional CSS files tend to grow over time, leading to specificity conflicts and scattered styles. Tailwind avoids this by keeping styles colocated with the component, eliminating cascade issues and reducing context switching.
+Traditional CSS files tend to grow over time, leading to specificity conflicts and scattered styles. 
+Tailwind avoids this by keeping styles colocated with the component, eliminating cascade issues and reducing context switching.
 Global CSS is reserved for design system primitives such as variables, tokens, and base styles. All component-level styling is handled through utility classes.
 
 ---
 
 ### Session and Authentication
 
-The session credential is stored in an `httpOnly` cookie set by the login API Route, never in `localStorage` or any client-side store. This is the correct security boundary: `localStorage` is readable by any JavaScript on the page, meaning an XSS payload can exfiltrate a token stored there. An `httpOnly` cookie is invisible to JavaScript entirely — the browser attaches it to requests automatically, and only the server can read or clear it.
+The session credential is stored in an `httpOnly` cookie set by the login API Route, never in `localStorage` or any client-side store. 
+This is the correct security boundary: `localStorage` is readable by any JavaScript on the page, meaning an XSS payload can exfiltrate a token stored there. 
+An `httpOnly` cookie is invisible to JavaScript entirely — the browser attaches it to requests automatically, and only the server can read or clear it.
 
 Cookie attributes used: `httpOnly`, `sameSite=lax` (CSRF protection for navigation requests), `secure` in production, `path=/`, `maxAge=24h`.
 
-In this project the cookie value is the mock user id, which is enough for a simulated session. In a real implementation this would be a signed, opaque token (JWT or server-side session id) so the server can verify integrity and revoke sessions independently of the user record.
+In this project the cookie value is the mock user id, which is enough for a simulated session. 
+In a real implementation this would be a signed, opaque token (JWT or server-side session id) so the server can verify integrity and revoke sessions independently of the user record.
 
-Server Components read the session via `lib/auth/session.ts → getSession()`, which calls `cookies()` from `next/headers`. This file cannot be imported in Client Components (Next.js enforces this through the `next/headers` module boundary), so the session credential stays on the server by construction.
+Server Components read the session via `lib/auth/session.ts → getSession()`, which calls `cookies()` from `next/headers`. 
+This file cannot be imported in Client Components (Next.js enforces this through the `next/headers` module boundary), so the session credential stays on the server by construction.
 
 ---
 
@@ -81,9 +99,14 @@ Server Components read the session via `lib/auth/session.ts → getSession()`, w
 
 **Runner:** Vitest with React Testing Library
 
-Tests are colocated with their source file — a `login.test.ts` lives next to `login.ts`, a `LoginForm.test.tsx` lives next to `LoginForm.tsx`. This makes it immediately clear what is tested and what is not, and keeps the test close to the code it covers.
+Tests are colocated with their source file — a `login.test.ts` lives next to `login.ts`, a `LoginForm.test.tsx` lives next to `LoginForm.tsx`. 
+This makes it immediately clear what is tested and what is not, and keeps the test close to the code it covers.
 
-Unit tests focus on pure logic (validators, utilities) and critical Client Component behavior (validation fires before the API is called). Async Server Components and API Routes are not covered by unit tests since Vitest does not support them; those are candidates for E2E tests.
+Unit tests focus on pure logic (validators, utilities) and critical Client Component behavior (validation fires before the API is called). Async Server Components and API Routes are not covered by unit tests since Vitest does not support them — those are covered by E2E tests instead.
+
+**E2E runner:** Playwright
+
+Playwright was chosen over Cypress because it runs in a real browser process (no iframe sandbox), has first-class support for multiple browsers, and its async API maps naturally to Next.js App Router navigation. E2E tests cover login, logout, the full transaction flow, the network error scenario, and transaction history navigation. Run with `npm run test:e2e`.
 
 ---
 
@@ -91,5 +114,19 @@ Unit tests focus on pure logic (validators, utilities) and critical Client Compo
 
 Server Components handle data fetching and pass data as props.
 Client Components handle user interaction and local UI state.
-Zustand stores manage shared client-side state across components.
 Business logic is kept in dedicated hooks or utility functions outside of UI components, making it easier to test and reuse independently.
+
+---
+
+## Known Limitations
+
+### Balance update race condition
+
+The transaction route reads the sender's balance, checks it, and then writes the updated value as two separate operations. Under concurrent requests, 
+two transactions could both pass the balance check before either write completes, allowing the balance to go negative. 
+In a real financial system this would be handled at the database level with a transaction and a row lock. This is noted here because it is the first issue that would need to be resolved before this code handles real money.
+
+### Session cookie stores a plain user id
+
+The `spin-pocket-session` cookie currently contains the user id in plain text. This is sufficient for a simulated session but would not be acceptable in production. 
+A real implementation would use a signed JWT or an opaque server-side session id so the server can verify integrity and revoke sessions without relying on the user record alone.

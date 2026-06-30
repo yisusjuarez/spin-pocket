@@ -1,25 +1,27 @@
 # Tasks — Mini Wallet Web App
 
 ## Screens
-- [ ] Login — form (phone or email), validations, loading/error states, session persistence, redirect to Home
-- [ ] Home — user name + balance, recent transactions list, loading/empty/error states, button to start new transaction
-- [ ] New Transaction — amount input, select favorite contact or add new one, summary before confirming, confirm with mocked response
-- [ ] Confirmation — random outcome: success (receipt), network error (retry), insufficient funds, timeout, unknown error fallback
+- [x] Login — form (phone or email), validations, loading/error states, session persistence, redirect to Home
+- [x] Register — form (name, email or phone, password), validations, redirect to Home
+- [x] Home — user name + balance, recent transactions list, loading/empty/error states, button to start new transaction
+- [x] New Transaction — amount input, select favorite contact or add new one, navigates to Confirmation
+- [x] Confirmation — shows draft summary; outcomes: success (receipt at /transaction/[id]), network error (retry), timeout (retry), unknown error (retry)
+- [x] Transaction Detail — receipt page reopenable from transaction history
 
 ## Business Rules
-- [ ] Amount must be greater than zero
-- [ ] Amount cannot exceed available balance
-- [ ] Recipient is required before confirming
+- [x] Amount must be greater than zero
+- [x] Amount cannot exceed available balance
+- [x] Recipient is required before confirming
 
 ## Technical Requirements
-- [X] Next.js + TypeScript
-- [ ] API Routes with mocked data
-- [X] State management (justify choice)
-- [ ] SSR/CSR decisions (justify per page)
-- [ ] Unit tests — validations, hooks, critical components
-- [ ] E2E tests (justify tool choice)
+- [x] Next.js + TypeScript
+- [x] API Routes with mocked data (auth, contacts, transactions)
+- [x] State management — no global store; data flows via props and URL search params (justified in DECISIONS.md)
+- [x] SSR/CSR decisions justified per page (DECISIONS.md)
+- [x] Unit tests — validations (login + transaction), login form, useLogin and useTransactionSubmit hooks
+- [x] E2E tests with Playwright — login, logout, transaction happy path, error scenario, history navigation
 
 ## Deliverables
-- [ ] README.md — setup instructions, libraries, known limitations, time invested
-- [ ] DECISIONS.md — architecture, UI/logic separation, edge cases, what you'd do differently
-- [ ] AI_USAGE.md — tools used, what was accepted/corrected, decisions that were yours
+- [x] README.md — setup instructions, scenario contacts, known limitations
+- [x] DECISIONS.md — architecture, rendering, session, state, API layer
+- [x] AI_USAGE.md — tools used, what was accepted/corrected, decisions that were yours

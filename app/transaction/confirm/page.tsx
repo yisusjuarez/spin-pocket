@@ -18,16 +18,29 @@ export default async function ConfirmPage({
   const recipientPhone = params.recipientPhone;
   const saveContact = params.saveContact === "true";
 
-  if (!amount || !recipientName || (!recipientEmail && !recipientPhone)) {
+  if (
+    !amount ||
+    amount <= 0 ||
+    !recipientName ||
+    (!recipientEmail && !recipientPhone)
+  ) {
     redirect("/transaction/new");
   }
 
   const user = await getUserById(session.user.id);
   if (!user) redirect("/login");
 
+  if (amount > user.balance) {
+    redirect("/transaction/new");
+  }
+
   const draft = {
     amount,
-    recipient: { name: recipientName, email: recipientEmail, phone: recipientPhone },
+    recipient: {
+      name: recipientName,
+      email: recipientEmail,
+      phone: recipientPhone,
+    },
     saveContact,
   };
 

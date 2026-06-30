@@ -1,5 +1,75 @@
 [
   {
+    "id": "tx-1782777602029",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Link Test",
+    "amount": 25,
+    "balanceAfter": 12300,
+    "createdAt": 1782777602029
+  },
+  {
+    "id": "tx-1782777574901",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Test User",
+    "amount": 50,
+    "balanceAfter": 12325,
+    "createdAt": 1782777574901
+  },
+  {
+    "id": "tx-1782777251100",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Link Test",
+    "amount": 25,
+    "balanceAfter": 12375,
+    "createdAt": 1782777251100
+  },
+  {
+    "id": "tx-1782777004579",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Link Test",
+    "amount": 25,
+    "balanceAfter": 12400,
+    "createdAt": 1782777004579
+  },
+  {
+    "id": "tx-1782776992376",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Test User",
+    "amount": 50,
+    "balanceAfter": 12425,
+    "createdAt": 1782776992376
+  },
+  {
+    "id": "tx-1782776772115",
+    "fromUserId": "user-1",
+    "fromName": "Ana García",
+    "toUserId": null,
+    "toName": "Link Test",
+    "amount": 25,
+    "balanceAfter": 12475,
+    "createdAt": 1782776772115
+  },
+  {
+    "id": "tx-1782776527208",
+    "fromUserId": "user-3",
+    "fromName": "Jesus Juarez",
+    "toUserId": null,
+    "toName": "andy",
+    "amount": 10,
+    "balanceAfter": 1100.92,
+    "createdAt": 1782776527208
+  },
+  {
     "id": "tx-1782772985530",
     "fromUserId": "user-3",
     "fromName": "Jesus Juarez",
